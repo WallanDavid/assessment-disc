@@ -1,0 +1,6 @@
+{
+  "1": {
+    "username": "123",
+    "password_hash": "scrypt:32768:8:1$nKwM422pHcEokI8I$bd42306652f2db258dc2a97115db95e49017699546b3127acae590447bf9ad37474204334342f523b0d92c1264fc3ddf1950902c49ce8c887908b8b419ef7abd"
+  }
+}

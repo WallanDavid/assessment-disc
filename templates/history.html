@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <title>Histórico de Avaliações</title>
+    <style>
+        body {
+            max-width: 700px;
+            margin: auto;
+            font-family: Arial, sans-serif;
+            padding: 1em;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 1em;
+        }
+        th, td {
+            border: 1px solid #999;
+            padding: 0.5em;
+            text-align: center;
+        }
+        th {
+            background: #eee;
+        }
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        a {
+            display: inline-block;
+            margin-top: 1em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Histórico de Avaliações</h1>
+    {% if resultados|length == 0 %}
+        <p>Nenhuma avaliação registrada ainda.</p>
+    {% else %}
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    {% for c in competencias %}
+                    <th>{{ c }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for res in resultados %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    {% for nota in res %}
+                    <td>{{ nota }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    <p><a href="/">Voltar para a avaliação</a></p>
+</body>
+</html>

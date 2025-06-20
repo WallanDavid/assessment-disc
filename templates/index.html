@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <title>Autoavaliação de Desempenho</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            max-width: 600px;
+            margin: auto;
+            font-family: Arial, sans-serif;
+            padding: 1em;
+        }
+        label {
+            display: block;
+            margin-top: 0.7em;
+        }
+        input[type=number] {
+            width: 60px;
+            padding: 4px;
+            margin-left: 10px;
+        }
+        button {
+            margin-top: 1em;
+            padding: 10px 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        #resultado {
+            margin-top: 2em;
+        }
+        #msgErro {
+            color: red;
+            font-weight: bold;
+        }
+        @media(max-width: 400px) {
+            body {
+                padding: 0.5em;
+            }
+            input[type=number] {
+                width: 50px;
+                margin-left: 5px;
+            }
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Autoavaliação de Desempenho</h1>
+    <form id="assessmentForm">
+        <div id="msgErro"></div>
+        {% for c in competencias %}
+            <label for="c{{ loop.index }}">{{ c }} (1 a 5):</label>
+            <input type="number" id="c{{ loop.index }}" name="c{{ loop.index }}" min="1" max="5" required />
+        {% endfor %}
+        <button type="submit">Enviar</button>
+    </form>
+
+    <div id="resultado" style="display:none;">
+        <h2>Resultado</h2>
+        <p>Média geral: <span id="media"></span></p>
+        <p>Classificação: <span id="classificacao"></span></p>
+        <p>Perfil predominante: <span id="perfil"></span></p>
+        <button id="btnDownload">Baixar gráfico</button>
+        <canvas id="radarChart" width="400" height="400" style="max-width: 100%;"></canvas>
+    </div>
+
+    <script>
+        const form = document.getElementById('assessmentForm');
+        const msgErro = document.getElementById('msgErro');
+        const resultadoDiv = document.getElementById('resultado');
+        const mediaSpan = document.getElementById('media');
+        const classificacaoSpan = document.getElementById('classificacao');
+        const perfilSpan = document.getElementById('perfil');
+        const btnDownload = document.getElementById('btnDownload');
+        const ctx = document.getElementById('radarChart').getContext('2d');
+        let radarChart;
+
+        function corPorNota(nota) {
+            if (nota < 2) return 'rgba(255, 99, 132, 0.7)';       // vermelho
+            else if (nota < 3.5) return 'rgba(255, 206, 86, 0.7)'; // amarelo
+            else return 'rgba(75, 192, 192, 0.7)';                 // verde
+        }
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            msgErro.textContent = '';
+
+            const notas = [];
+            for(let i=1; i<= {{ competencias|length }}; i++) {
+                const val = parseInt(document.getElementById('c'+i).value);
+                if (isNaN(val) || val < 1 || val > 5) {
+                    msgErro.textContent = "Por favor, preencha todas as notas com valores entre 1 e 5.";
+                    resultadoDiv.style.display = 'none';
+                    return;
+                }
+                notas.push(val);
+            }
+
+            fetch('/submit', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({notas: notas})
+            })
+            .then(response => {
+                if(!response.ok) {
+                    return response.json().then(data => { throw new Error(data.erro || "Erro desconhecido"); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                resultadoDiv.style.display = 'block';
+                mediaSpan.textContent = data.media;
+                classificacaoSpan.textContent = data.classificacao;
+                perfilSpan.textContent = data.perfil;
+
+                // Preparar cores por nota
+                const bgColors = data.notas.map(n => corPorNota(n));
+                const borderColors = bgColors.map(c => c.replace('0.7', '1'));
+
+                if (radarChart) radarChart.destroy();
+
+                radarChart = new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: data.competencias,
+                        datasets: [{
+                            label: 'Autoavaliação',
+                            data: data.notas,
+                            backgroundColor: bgColors,
+                            borderColor: borderColors,
+                            borderWidth: 2,
+                            pointBackgroundColor: borderColors
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            r: {
+                                min: 0,
+                                max: 5,
+                                ticks: { stepSize: 1 }
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+            })
+            .catch(err => {
+                msgErro.textContent = err.message;
+                resultadoDiv.style.display = 'none';
+            });
+        });
+
+        btnDownload.addEventListener('click', function() {
+            if (!radarChart) return;
+            const url = radarChart.toBase64Image();
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'autoavaliacao_radar.png';
+            a.click();
+        });
+    </script>
+
+    <p><a href="/history">Ver histórico de avaliações</a></p>
+</body>
+</html>
