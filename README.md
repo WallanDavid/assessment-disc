@@ -1,54 +1,60 @@
-Autoavaliação de Desempenho
-Este projeto é uma aplicação web para realizar autoavaliações de desempenho, apresentando os resultados em um gráfico radar interativo e mantendo um histórico das avaliações feitas.
+# 🚀 Autoavaliação de Desempenho
 
-Funcionalidades
-Formulário para avaliação com notas de 1 a 5 para várias competências.
+Uma aplicação web para realizar **autoavaliações de desempenho**, com resultados exibidos em um **gráfico radar interativo** e um histórico completo das avaliações feitas.
 
-Validação dos valores de entrada no frontend.
+---
 
-Gráfico radar dinâmico com cores indicativas para cada nota (vermelho, amarelo e verde).
+## ✨ Funcionalidades
 
-Histórico das avaliações apresentadas em tabela.
+- 📝 Formulário para avaliação com notas de 1 a 5 para várias competências  
+- ✅ Validação de entrada no frontend para garantir dados corretos  
+- 📊 Gráfico radar colorido (vermelho, amarelo, verde) indicando desempenho  
+- 📚 Histórico de avaliações exibido em tabela clara e organizada  
+- 📥 Download do gráfico gerado como imagem PNG  
 
-Download do gráfico gerado como imagem PNG.
+---
 
-Tecnologias Utilizadas
-HTML5, CSS3 e JavaScript (Chart.js)
+## 🛠 Tecnologias Utilizadas
 
-Backend Python com Flask
+- 🐍 Python 3 + Flask  
+- 🌐 HTML5, CSS3, JavaScript  
+- 📈 Chart.js para gráficos dinâmicos  
+- 🧩 Jinja2 para templates HTML  
 
-Templates Jinja2 para renderização dinâmica
+---
 
-Como Rodar Localmente
-Clone o repositório:
+## ⚙️ Como Rodar Localmente
+
+```bash
 git clone https://github.com/WallanDavid/assessment-disc.git
 cd assessment-disc
-
-Crie e ative o ambiente virtual:
 python -m venv venv
-source venv/bin/activate # Linux/Mac
-venv\Scripts\activate # Windows
 
-Instale as dependências:
+# Ative o ambiente virtual:
+# Windows
+venv\Scripts\activate
+# Linux/Mac
+source venv/bin/activate
+
 pip install flask
-
-Execute a aplicação:
 flask run
+Abra no navegador: http://127.0.0.1:5000
 
-Abra no navegador:
-http://127.0.0.1:5000
 
-Estrutura do Projeto
-app.py — arquivo principal do backend Flask
+📂 Estrutura do Projeto
+.
+├── app.py            # Backend Flask
+├── results.json      # Armazenamento de resultados
+├── users.json        # Armazenamento de usuários
+├── templates/        # Templates Jinja2 (HTML)
+│   ├── base.html
+│   ├── history.html
+│   └── index.html
+└── static/           # Arquivos estáticos (CSS, JS, imagens)
 
-templates/ — arquivos HTML com Jinja2
 
-static/ — arquivos estáticos (CSS, JS, imagens)
-
-results.json e users.json — armazenamento local de dados simples
-
-Autor
+✍️ Autor
 Wallan David
 
-Licença
-MIT License
+📄 Licença
+Este projeto está sob a licença MIT License — sinta-se livre para usar, modificar e compartilhar!
